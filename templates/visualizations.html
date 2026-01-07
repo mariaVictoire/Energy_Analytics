@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisations - {{ month }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e0e6ed;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #5a9fd4 0%, #4a8bc2 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header .meta {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e6ed;
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            color: #6b8a9a;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .tab-button:hover {
+            color: #2c5f7c;
+            background: #f8fafb;
+        }
+        
+        .tab-button.active {
+            color: #2c5f7c;
+            border-bottom-color: #5a9fd4;
+            background: #f8fafb;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chart-wrapper {
+            text-align: center;
+            background: linear-gradient(135deg, #f8fafb 0%, #f0f4f7 100%);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #e0e6ed;
+            margin-bottom: 20px;
+        }
+        
+        .chart-wrapper h3 {
+            color: #2c5f7c;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .chart-wrapper img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #5a9fd4;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: #4a8bc2;
+            text-decoration: underline;
+        }
+        
+        .no-chart {
+            padding: 40px;
+            text-align: center;
+            color: #6b8a9a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Visualisations - {{ month }}</h1>
+            <div class="meta">
+                <p>Période: {{ start_date }} au {{ end_date }}</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <a href="/" class="back-link">← Retour à l'accueil</a>
+            
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('price_evolution')">Évolution des Prix</button>
+                <button class="tab-button" onclick="showTab('production_evolution')">Évolution Production</button>
+                <button class="tab-button" onclick="showTab('revenue_hourly')">Revenus Horaires</button>
+                <button class="tab-button" onclick="showTab('price_distribution')">Distribution Prix</button>
+                <button class="tab-button" onclick="showTab('price_pie')">Répartition</button>
+            </div>
+            
+            <div id="tab-price_evolution" class="tab-content active">
+                {% if charts and 'price_evolution' in charts %}
+                <div class="chart-wrapper">
+                    <h3>Évolution des Prix Spot</h3>
+                    <img src="data:image/png;base64,{{ charts['price_evolution'] }}" alt="Évolution des prix">
+                </div>
+                {% else %}
+                <div class="no-chart">
+                    <p>Graphique non disponible</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div id="tab-production_evolution" class="tab-content">
+                {% if charts and 'production_evolution' in charts %}
+                <div class="chart-wrapper">
+                    <h3>Évolution de la Production</h3>
+                    <img src="data:image/png;base64,{{ charts['production_evolution'] }}" alt="Évolution de la production">
+                </div>
+                {% else %}
+                <div class="no-chart">
+                    <p>Graphique non disponible</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div id="tab-revenue_hourly" class="tab-content">
+                {% if charts and 'revenue_hourly' in charts %}
+                <div class="chart-wrapper">
+                    <h3>Revenus Horaires</h3>
+                    <img src="data:image/png;base64,{{ charts['revenue_hourly'] }}" alt="Revenus horaires">
+                </div>
+                {% else %}
+                <div class="no-chart">
+                    <p>Graphique non disponible</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div id="tab-price_distribution" class="tab-content">
+                {% if charts and 'price_distribution' in charts %}
+                <div class="chart-wrapper">
+                    <h3>Distribution des Prix Spot</h3>
+                    <img src="data:image/png;base64,{{ charts['price_distribution'] }}" alt="Distribution des prix">
+                </div>
+                {% else %}
+                <div class="no-chart">
+                    <p>Graphique non disponible</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div id="tab-price_pie" class="tab-content">
+                {% if charts and 'price_pie' in charts %}
+                <div class="chart-wrapper">
+                    <h3>Répartition des Heures (Prix Positifs vs Négatifs)</h3>
+                    <img src="data:image/png;base64,{{ charts['price_pie'] }}" alt="Répartition des heures">
+                </div>
+                {% else %}
+                <div class="no-chart">
+                    <p>Graphique non disponible</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            // Masquer tous les contenus d'onglets
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Désactiver tous les boutons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Afficher l'onglet sélectionné
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Activer le bouton correspondant
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
+

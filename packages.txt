@@ -1,0 +1,4 @@
+# Fichier pour Streamlit Community Cloud
+# Liste les packages système nécessaires (optionnel)
+# Laisser vide si aucun package système n'est requis
+
